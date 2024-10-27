@@ -56,12 +56,8 @@ struct StepupPageView: View {
         ZStack {
             backgroundGradient
             VStack {
-                GeometryReader { geometry in
-                    ScrollView {
-                        page.contentView(isCollapsed: viewState == .collapsed)
-                            .frame(minHeight: geometry.size.height)
-                    }
-                }
+                page.contentView(isCollapsed: viewState == .collapsed)
+                Spacer()
                 formButtons
             }
             .padding(20)
@@ -159,7 +155,7 @@ public struct MockSingleStepupPageView: StepupPageViewProvidable {
     private func body(isCollapsed: Bool) -> some View {
         VStack {
             Text("Dette er en tekst")
-                .frame(maxWidth: .infinity, alignment: isCollapsed ? .leading : .center)
+                .frame(alignment: isCollapsed ? .leading : .center)
             Text("Text 2")
             Spacer()
             Text("Text 3")
@@ -170,8 +166,8 @@ public struct MockSingleStepupPageView: StepupPageViewProvidable {
 
 #Preview {
     StepupView(pages: [
-        MockSingleStepupPageView(.cyan, .black),
         MockStepupPageView(.red, .green),
+        MockSingleStepupPageView(.cyan, .black),
         MockStepupPageView(.blue, .white),
         MockStepupPageView(.pink, .black),
         MockStepupPageView(.purple, .brown),
