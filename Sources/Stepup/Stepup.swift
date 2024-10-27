@@ -6,7 +6,7 @@ public enum StepupViewState {
 public protocol StepupPageViewProvidable {
     var gradientColor1: Color { get }
     var gradientColor2: Color { get }
-    func contentView(isCollapsed: Bool) -> AnyView
+    @MainActor func contentView(isCollapsed: Bool) -> AnyView
 }
 
 public struct StepupView: View {
@@ -56,8 +56,11 @@ struct StepupPageView: View {
         ZStack {
             backgroundGradient
             VStack {
-                ScrollView {
-                    page.contentView(isCollapsed: viewState == .collapsed)
+                GeometryReader { geometry in
+                    ScrollView {
+                        page.contentView(isCollapsed: viewState == .collapsed)
+                            .frame(minHeight: geometry.size.height)
+                    }
                 }
                 formButtons
             }
@@ -116,7 +119,7 @@ private struct FormButton: View {
         }
         .padding()
         .background(.primary)
-
+        
     }
 }
 
@@ -148,12 +151,20 @@ public struct MockSingleStepupPageView: StepupPageViewProvidable {
         gradientColor1 = c1
         gradientColor2 = c2
     }
+    @MainActor
     public func contentView(isCollapsed: Bool) -> AnyView {
-        AnyView(
+        AnyView(body(isCollapsed: isCollapsed))
+    }
+    @MainActor
+    private func body(isCollapsed: Bool) -> some View {
+        VStack {
             Text("Dette er en tekst")
                 .frame(maxWidth: .infinity, alignment: isCollapsed ? .leading : .center)
-                .animation(.easeInOut, value: isCollapsed)
-        )
+            Text("Text 2")
+            Spacer()
+            Text("Text 3")
+        }
+        .animation(.easeInOut, value: isCollapsed)
     }
 }
 
